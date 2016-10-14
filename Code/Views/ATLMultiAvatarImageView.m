@@ -36,16 +36,19 @@
     
     [self setupConstraintsForImageViews];
     
-    [self layoutIfNeeded];
-    [self setNeedsLayout];
+}
+
+-(void)layoutSubviews {
+    [super layoutSubviews];
+    
     _topLeftImageView.layer.cornerRadius = _topLeftImageView.frame.size.height / 2;
     _bottomRightImageView.layer.cornerRadius = _bottomRightImageView.frame.size.height / 2;
     _topLeftImageView.clipsToBounds = YES;
     _bottomRightImageView.clipsToBounds = YES;
     _topLeftImageView.layer.borderColor = [UIColor whiteColor].CGColor;
-    _topLeftImageView.layer.borderWidth = 2.0f;
+    _topLeftImageView.layer.borderWidth = 1.0f;
     _bottomRightImageView.layer.borderColor = [UIColor whiteColor].CGColor;
-    _bottomRightImageView.layer.borderWidth = 2.0f;
+    _bottomRightImageView.layer.borderWidth = 1.0f;
 }
 
 -(void)setupConstraintsForImageViews
@@ -55,28 +58,28 @@
                                                      relatedBy:NSLayoutRelationEqual
                                                         toItem:self
                                                      attribute:NSLayoutAttributeHeight
-                                                    multiplier:0.5f
+                                                    multiplier:0.66f
                                                       constant:0.0f]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_topLeftImageView
                                                      attribute:NSLayoutAttributeWidth
                                                      relatedBy:NSLayoutRelationEqual
                                                         toItem:self
                                                      attribute:NSLayoutAttributeWidth
-                                                    multiplier:0.5f
+                                                    multiplier:0.66f
                                                       constant:0.0f]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_topLeftImageView
                                                      attribute:NSLayoutAttributeCenterX
                                                      relatedBy:NSLayoutRelationEqual
                                                         toItem:self
                                                      attribute:NSLayoutAttributeCenterX
-                                                    multiplier:0.75f
+                                                    multiplier:0.66f
                                                       constant:0.0f]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_topLeftImageView
                                                      attribute:NSLayoutAttributeCenterY
                                                      relatedBy:NSLayoutRelationEqual
                                                         toItem:self
                                                      attribute:NSLayoutAttributeCenterY
-                                                    multiplier:0.75f
+                                                    multiplier:0.66f
                                                       constant:0.0f]];
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_bottomRightImageView
@@ -84,28 +87,28 @@
                                                      relatedBy:NSLayoutRelationEqual
                                                         toItem:self
                                                      attribute:NSLayoutAttributeHeight
-                                                    multiplier:0.5f
+                                                    multiplier:0.66f
                                                       constant:0.0f]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_bottomRightImageView
                                                      attribute:NSLayoutAttributeWidth
                                                      relatedBy:NSLayoutRelationEqual
                                                         toItem:self
                                                      attribute:NSLayoutAttributeWidth
-                                                    multiplier:0.5f
+                                                    multiplier:0.66f
                                                       constant:0.0f]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_bottomRightImageView
                                                      attribute:NSLayoutAttributeCenterX
                                                      relatedBy:NSLayoutRelationEqual
                                                         toItem:self
                                                      attribute:NSLayoutAttributeCenterX
-                                                    multiplier:1.25f
+                                                    multiplier:1.33f
                                                       constant:0.0f]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_bottomRightImageView
                                                      attribute:NSLayoutAttributeCenterY
                                                      relatedBy:NSLayoutRelationEqual
                                                         toItem:self
                                                      attribute:NSLayoutAttributeCenterY
-                                                    multiplier:1.25f
+                                                    multiplier:1.33f
                                                       constant:0.0f]];
 }
 

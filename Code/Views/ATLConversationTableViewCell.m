@@ -21,7 +21,6 @@
 #import "ATLConversationTableViewCell.h"
 #import "ATLConstants.h"
 #import "ATLMessagingUtilities.h"
-//#import "ATLAvatarImageView.h"
 #import "ATLMultiAvatarImageView.h"
 
 static BOOL ATLIsDateInToday(NSDate *date)
@@ -29,7 +28,7 @@ static BOOL ATLIsDateInToday(NSDate *date)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     NSCalendarUnit dateUnits = NSEraCalendarUnit | NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
-#pragma GCC diagnostic pop    
+#pragma GCC diagnostic pop
     NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:dateUnits fromDate:date];
     NSDateComponents *todayComponents = [[NSCalendar currentCalendar] components:dateUnits fromDate:[NSDate date]];
     return ([dateComponents day] == [todayComponents day] &&
@@ -62,6 +61,7 @@ static NSDateFormatter *ATLShortTimeFormatter()
 @interface ATLConversationTableViewCell ()
 
 @property (nonatomic) NSLayoutConstraint *conversationTitleLabelWithImageLeftConstraint;
+@property (nonatomic) NSLayoutConstraint *conversationTitleLabelWithMultiImageLeftConstraint;
 @property (nonatomic) NSLayoutConstraint *conversationTitleLabelWithoutImageLeftConstraint;
 
 @property (nonatomic) ATLAvatarImageView *conversationImageView;
@@ -179,24 +179,29 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
 
 - (void)updateConstraints
 {
-    if (self.conversationImageView.isHidden) {
+    if (self.conversationImageView.isHidden && !self.multiConversationImageView.isHidden) {
         [self.contentView removeConstraint:self.conversationTitleLabelWithImageLeftConstraint];
-        [self.contentView addConstraint:self.conversationTitleLabelWithoutImageLeftConstraint];
-    } else {
+        [self.contentView removeConstraint:self.conversationTitleLabelWithoutImageLeftConstraint];
+        [self.contentView addConstraint:self.conversationTitleLabelWithMultiImageLeftConstraint];
+    } else if (!self.conversationImageView.isHidden && self.multiConversationImageView.isHidden) {
+        [self.contentView removeConstraint:self.conversationTitleLabelWithMultiImageLeftConstraint];
         [self.contentView removeConstraint:self.conversationTitleLabelWithoutImageLeftConstraint];
         [self.contentView addConstraint:self.conversationTitleLabelWithImageLeftConstraint];
+    } else {
+        [self.contentView removeConstraint:self.conversationTitleLabelWithMultiImageLeftConstraint];
+        [self.contentView removeConstraint:self.conversationTitleLabelWithImageLeftConstraint];
+        [self.contentView addConstraint:self.conversationTitleLabelWithoutImageLeftConstraint];
     }
-
+    
     [super updateConstraints];
 }
 
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-
+    
     self.separatorInset = UIEdgeInsetsMake(0, CGRectGetMinX(self.conversationTitleLabel.frame), 0, 0);
-    self.conversationImageView.layer.cornerRadius = CGRectGetHeight(self.conversationImageView.frame) / 2;
-}
+    self.conversationImageView.layer.cornerRadius = CGRectGetHeight(self.conversationImageView.frame) / 2;}
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
@@ -352,6 +357,7 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
 - (void)configureconversationTitleLabelLayoutContraints
 {
     self.conversationTitleLabelWithImageLeftConstraint = [NSLayoutConstraint constraintWithItem:self.conversationTitleLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.conversationImageView attribute:NSLayoutAttributeRight multiplier:1.0 constant:10];
+    self.conversationTitleLabelWithMultiImageLeftConstraint = [NSLayoutConstraint constraintWithItem:self.conversationTitleLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.multiConversationImageView attribute:NSLayoutAttributeRight multiplier:1.0 constant:10];
     self.conversationTitleLabelWithoutImageLeftConstraint = [NSLayoutConstraint constraintWithItem:self.conversationTitleLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:30];
     [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.conversationTitleLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.dateLabel attribute:NSLayoutAttributeLeft multiplier:1.0 constant:-ATLConversationTitleLabelRightPadding]];
     [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.conversationTitleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeTop multiplier:1.0 constant:ATLConversationLabelTopPadding]];
