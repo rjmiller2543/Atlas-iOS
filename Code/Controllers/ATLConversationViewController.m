@@ -1331,9 +1331,9 @@ static NSInteger const ATLPhotoActionSheet = 1000;
     NSString *participantName;
     if (message.sender.userID) {
         id<ATLParticipant> participant = [self participantForIdentity:message.sender];
-        participantName = participant.displayName ?: ATLLocalizedString(@"atl.conversation.participant.unknown.key", @"Unknown User", nil);
+        participantName = participant.firstName ?: ATLLocalizedString(@"atl.conversation.participant.unknown.key", @"Unknown User", nil);
     } else {
-        participantName = message.sender.displayName;
+        participantName = message.sender.firstName;
     }
     return participantName;
 }
