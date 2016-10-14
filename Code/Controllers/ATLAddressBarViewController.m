@@ -36,7 +36,7 @@
 
 @implementation ATLAddressBarViewController
 
-CGFloat const ATLDisabledStringPadding = 20;
+CGFloat const ATLDisabledStringPadding = 5;
 NSString *const ATLAddressBarViewAccessibilityLabel = @"Address Bar View";
 NSString *const ATLAddressBarAccessibilityLabel = @"Address Bar";
 static NSString *const ATLMParticpantCellIdentifier = @"participantCellIdentifier";
@@ -65,7 +65,7 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
     self.addressBarView.addressBarTextView.delegate = self;
     [self.addressBarView.addContactsButton addTarget:self action:@selector(contactButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.addressBarView];
-   
+    
     self.tableView = [[UITableView alloc] init];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
     self.tableView.delegate = self;
@@ -100,7 +100,7 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
 {
     if (self.isDisabled) return;
     self.disabled = YES;
-
+    
     self.addressBarView.addressBarTextView.text = [self disabledStringForParticipants:self.selectedParticipants];
     self.addressBarView.addressBarTextView.textColor = ATLGrayColor();
     self.addressBarView.addressBarTextView.editable = NO;
@@ -116,7 +116,7 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
 - (void)selectParticipant:(id<ATLParticipant>)participant
 {
     if (!participant) return;
-
+    
     NSMutableOrderedSet *participants = [NSMutableOrderedSet orderedSetWithOrderedSet:self.selectedParticipants];
     [participants addObject:participant];
     self.selectedParticipants = participants;
@@ -126,7 +126,8 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
 {
     if (!selectedParticipants && !_selectedParticipants) return;
     if ([[selectedParticipants valueForKey:@"userID"] isEqual:[_selectedParticipants valueForKey:@"userID"]]) return;
-
+    
+    [self sizeAddressBarView];
     if (self.isDisabled) {
         NSString *text = [self disabledStringForParticipants:selectedParticipants];
         self.addressBarView.addressBarTextView.text = text;
@@ -134,7 +135,6 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
         NSAttributedString *attributedText = [self attributedStringForParticipants:selectedParticipants];
         self.addressBarView.addressBarTextView.attributedText = attributedText;
     }
-    [self sizeAddressBarView];
     
     NSOrderedSet *existingParticipants = _selectedParticipants;
     _selectedParticipants = selectedParticipants;
@@ -264,7 +264,7 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
         attributes[NSForegroundColorAttributeName] = self.addressBarView.addressBarTextView.addressBarTextColor;
         textView.typingAttributes = attributes;
     }
-
+    
     // If user is deleting...
     if ([text isEqualToString:@""]) {
         NSAttributedString *attributedString = textView.attributedText;
@@ -306,7 +306,7 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
             [self.delegate addressBarViewController:self didRemoveParticipant:participant];
         }
     }
-
+    
     [self sizeAddressBarView];
     NSString *enteredText = textView.text;
     NSString *searchText = [self textForSearchFromTextView:textView];
@@ -480,15 +480,15 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
 {
     ATLAddressBarTextView *textView = self.addressBarView.addressBarTextView;
     NSMutableAttributedString *attributedString = [NSMutableAttributedString new];
-
+    
     NSAttributedString *attributedName = [[NSAttributedString alloc] initWithString:participant.displayName attributes:@{ATLAddressBarPartAttributeName: ATLAddressBarNamePart, ATLAddressBarPartAttributeName: ATLAddressBarNamePart, NSForegroundColorAttributeName: textView.addressBarHighlightColor}];
     [attributedString appendAttributedString:attributedName];
-
+    
     NSAttributedString *attributedDelimiter = [[NSAttributedString alloc] initWithString:@", " attributes:@{ATLAddressBarPartAttributeName: ATLAddressBarDelimiterPart, NSForegroundColorAttributeName: [UIColor grayColor]}];
     [attributedString appendAttributedString:attributedDelimiter];
-
+    
     [attributedString addAttributes:@{ATLAddressBarParticipantAttributeName: participant, NSFontAttributeName: textView.font, NSParagraphStyleAttributeName: textView.typingAttributes[NSParagraphStyleAttributeName]} range:NSMakeRange(0, attributedString.length)];
-
+    
     return attributedString;
 }
 
@@ -512,14 +512,14 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
             return NSMakeRange(participantEndIndex, 0);
         }
     }
-
+    
     __block NSRange adjustedRange = selectedRange;
     [attributedString enumerateAttribute:ATLAddressBarParticipantAttributeName inRange:NSMakeRange(0, attributedString.length) options:0 usingBlock:^(id<ATLParticipant> participant, NSRange range, BOOL *stop) {
         if (!participant) return;
         if (NSIntersectionRange(selectedRange, range).length == 0) return;
         adjustedRange = NSUnionRange(adjustedRange, range);
     }];
-
+    
     return adjustedRange;
 }
 
@@ -530,6 +530,9 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
     [self.addressBarView.addressBarTextView layoutIfNeeded]; // Layout text view so we can have an accurate width.
     
     __block NSString *disabledString = [participants.firstObject displayName];
+    if ([disabledString isEqualToString:@""] || disabledString == nil) {
+        disabledString = @"Knockdown User";
+    }
     NSMutableOrderedSet *mutableParticipants = [participants mutableCopy];
     [mutableParticipants removeObject:participants.firstObject];
     
@@ -540,6 +543,10 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
         if ([self textViewHasSpaceForParticipantString:truncatedString]) {
             remainingParticipants -= 1;
             othersString = [self otherStringWithRemainingParticipants:remainingParticipants];
+            NSString *thisParticipantName = participant.displayName;
+            if ([thisParticipantName isEqualToString:@""] || thisParticipantName == nil) {
+                thisParticipantName = @"Knockdown User";
+            }
             NSString *expandedString = [NSString stringWithFormat:@"%@, %@ %@", disabledString, participant.displayName, othersString];
             if ([self textViewHasSpaceForParticipantString:expandedString]) {
                 disabledString = [NSString stringWithFormat:@"%@, %@", disabledString, participant.displayName];
@@ -564,7 +571,10 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
 - (BOOL)textViewHasSpaceForParticipantString:(NSString *)participantString
 {
     CGSize fittedSize = [participantString sizeWithAttributes:@{NSFontAttributeName: self.addressBarView.addressBarTextView.font}];
-    return fittedSize.width < (CGRectGetWidth(self.addressBarView.addressBarTextView.frame) - ATLAddressBarTextViewIndent - ATLAddressBarTextContainerInset - ATLDisabledStringPadding); // Adding extra padding to account for text container inset.
+    
+    [self sizeAddressBarView];
+    CGFloat fittedWidth = (CGRectGetWidth(self.addressBarView.addressBarTextView.frame) - ATLAddressBarTextViewIndent - ATLAddressBarTextContainerInset - ATLDisabledStringPadding);
+    return fittedSize.width < fittedWidth; // Adding extra padding to account for text container inset.
 }
 
 #pragma mark - Auto Layout
