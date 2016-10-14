@@ -31,6 +31,9 @@
     _topLeftImageView = [[ATLAvatarImageView alloc] init];
     _bottomRightImageView = [[ATLAvatarImageView alloc] init];
     
+    _topLeftImageView.translatesAutoresizingMaskIntoConstraints = NO;
+    _bottomRightImageView.translatesAutoresizingMaskIntoConstraints = NO;
+    
     [self addSubview:_topLeftImageView];
     [self addSubview:_bottomRightImageView];
     
