@@ -323,12 +323,23 @@ NSString *const ATLConversationListViewControllerDeletionModeEveryone = @"Everyo
     [conversationCell presentConversation:conversation];
     
     if (self.displaysAvatarItem) {
-        if ([self.dataSource respondsToSelector:@selector(conversationListViewController:avatarItemForConversation:)]) {
-            id<ATLAvatarItem> avatarItem = [self.dataSource conversationListViewController:self avatarItemForConversation:conversation];
-            [conversationCell updateWithAvatarItem:avatarItem];
-        } else {
-            @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Conversation View Delegate must return an object conforming to the `ATLAvatarItem` protocol." userInfo:nil];
+        if (conversation.participants.count < 3) {
+            if ([self.dataSource respondsToSelector:@selector(conversationListViewController:avatarItemForConversation:)]) {
+                id<ATLAvatarItem> avatarItem = [self.dataSource conversationListViewController:self avatarItemForConversation:conversation];
+                [conversationCell updateWithAvatarItem:avatarItem];
+            } else {
+                @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Conversation View Delegate must return an object conforming to the `ATLAvatarItem` protocol." userInfo:nil];
+            }
         }
+        else {
+            if ([self.dataSource respondsToSelector:@selector(conversationListViewController:avatarItemsForConversation:)]) {
+                NSArray<id<ATLAvatarItem>> *avatarItems = [self.dataSource conversationListViewController:self avatarItemsForConversation:conversation];
+                [conversationCell updateWithAvatarItems:avatarItems];
+            } else {
+                @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Conversation View Delegate must return an object conforming to the `ATLAvatarItem` protocol." userInfo:nil];
+            }
+        }
+        
     }
     
     if ([self.dataSource respondsToSelector:@selector(conversationListViewController:titleForConversation:)]) {

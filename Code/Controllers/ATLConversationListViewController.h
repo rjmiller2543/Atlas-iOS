@@ -94,6 +94,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (id<ATLAvatarItem>)conversationListViewController:(ATLConversationListViewController *)conversationListViewController avatarItemForConversation:(LYRConversation *)conversation;
 
+- (NSArray<id<ATLAvatarItem>> *)conversationListViewController:(ATLConversationListViewController *)conversationListViewController avatarItemsForConversation:(LYRConversation *)conversation;
+
 /**
  @abstract Asks the data source for the table view cell reuse identifier for a conversation.
  @param conversationListViewController The `ATLConversationListViewController` requesting the string.

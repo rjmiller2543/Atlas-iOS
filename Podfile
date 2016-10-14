@@ -11,21 +11,21 @@ target 'Storyboard' do
   pod 'Atlas', path: '.'
 end
 
-abstract_target 'test' do
-  pod 'KIFViewControllerActions', git: 'https://github.com/blakewatters/KIFViewControllerActions.git'
-  pod 'LYRCountDownLatch', git: 'https://github.com/layerhq/LYRCountDownLatch.git'
-  pod 'KIF'
-  pod 'Expecta'
-  pod 'OCMock'
+#abstract_target 'test' do
+#  pod 'KIFViewControllerActions', git: 'https://github.com/blakewatters/KIFViewControllerActions.git'
+#  pod 'LYRCountDownLatch', git: 'https://github.com/layerhq/LYRCountDownLatch.git'
+#  pod 'KIF'
+#  pod 'Expecta'
+#  pod 'OCMock'
 
-  target 'ProgrammaticTests'
-  target 'StoryboardTests'
-end
+#  target 'ProgrammaticTests'
+#  target 'StoryboardTests'
+#end
 
-target 'UnitTests' do
-  pod 'Expecta'
-  pod 'OCMock'
-end
+#target 'UnitTests' do
+#  pod 'Expecta'
+#  pod 'OCMock'
+#end
 
 
 

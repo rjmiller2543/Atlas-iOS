@@ -49,6 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)updateWithAvatarItem:(id<ATLAvatarItem>)avatarItem;
 
+- (void)updateWithAvatarItems:(NSArray<id<ATLAvatarItem>> *)avatarItems;
+
 /**
  @abstract Provides a string to display representing the conversation's last message.
  @param lastMessageText The last message text to display.

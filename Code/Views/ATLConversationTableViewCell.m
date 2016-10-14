@@ -21,7 +21,8 @@
 #import "ATLConversationTableViewCell.h"
 #import "ATLConstants.h"
 #import "ATLMessagingUtilities.h"
-#import "ATLAvatarImageView.h"
+//#import "ATLAvatarImageView.h"
+#import "ATLMultiAvatarImageView.h"
 
 static BOOL ATLIsDateInToday(NSDate *date)
 {
@@ -64,6 +65,7 @@ static NSDateFormatter *ATLShortTimeFormatter()
 @property (nonatomic) NSLayoutConstraint *conversationTitleLabelWithoutImageLeftConstraint;
 
 @property (nonatomic) ATLAvatarImageView *conversationImageView;
+@property (nonatomic) ATLMultiAvatarImageView *multiConversationImageView;
 @property (nonatomic) UILabel *conversationTitleLabel;
 @property (nonatomic) UILabel *dateLabel;
 @property (nonatomic) UILabel *lastMessageLabel;
@@ -123,6 +125,12 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
     _conversationImageView.layer.masksToBounds = YES;
     _conversationImageView.hidden = YES;
     [self.contentView addSubview:_conversationImageView];
+    
+    _multiConversationImageView = [[ATLMultiAvatarImageView alloc] init];
+    _multiConversationImageView.translatesAutoresizingMaskIntoConstraints = NO;
+    _multiConversationImageView.layer.masksToBounds = YES;
+    _multiConversationImageView.hidden = YES;
+    [self.contentView addSubview:_multiConversationImageView];
     
     // Initialize Sender Image
     _conversationTitleLabel = [[UILabel alloc] init];
@@ -286,6 +294,16 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
 {
     self.conversationImageView.avatarItem = avatarItem;
     self.conversationImageView.hidden = NO;
+    self.multiConversationImageView.hidden = YES;
+    [self setNeedsUpdateConstraints];
+}
+
+- (void)updateWithAvatarItems:(NSArray<id<ATLAvatarItem>> *)avatarItems
+{
+    [self.multiConversationImageView setAvatarItems:avatarItems];
+    [self.multiConversationImageView updateAvatars];
+    self.multiConversationImageView.hidden = NO;
+    self.conversationImageView.hidden = YES;
     [self setNeedsUpdateConstraints];
 }
 
@@ -324,6 +342,11 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
     [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.conversationImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.conversationImageView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
     [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.conversationImageView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:10]];
     [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.conversationImageView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]];
+    
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.multiConversationImageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeHeight multiplier:0.6 constant:0]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.multiConversationImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.multiConversationImageView attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.multiConversationImageView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:10]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.multiConversationImageView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]];
 }
 
 - (void)configureconversationTitleLabelLayoutContraints
