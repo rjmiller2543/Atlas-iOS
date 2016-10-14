@@ -118,6 +118,8 @@ NSString *const ATLAvatarImageViewAccessibilityLabel = @"ATLAvatarImageViewAcces
     } else if (avatarItem.avatarInitials) {
         self.image = nil;
         self.initialsLabel.text = avatarItem.avatarInitials;
+    } else {
+        self.initialsLabel.text = @"K U";
     }
     _avatarItem = avatarItem;
 }
