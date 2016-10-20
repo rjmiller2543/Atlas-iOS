@@ -31,6 +31,7 @@
 @property (nonatomic) NSArray *participants;
 @property (nonatomic, getter=isDisabled) BOOL disabled;
 @property (nonatomic) BOOL hasAppeared;
+@property (nonatomic) BOOL firstNameOnly;
 
 @end
 
@@ -529,7 +530,13 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
 {
     [self.addressBarView.addressBarTextView layoutIfNeeded]; // Layout text view so we can have an accurate width.
     
-    __block NSString *disabledString = [participants.firstObject displayName];
+    if (participants.count > 1) {
+        _firstNameOnly = true;
+    } else {
+        _firstNameOnly = false;
+    }
+    
+    __block NSString *disabledString = (_firstNameOnly ? [participants.firstObject firstName] : [participants.firstObject displayName]);
     if ([disabledString isEqualToString:@""] || disabledString == nil) {
         disabledString = @"Knockdown User";
     }
@@ -543,13 +550,13 @@ static NSString *const ATLAddressBarParticipantAttributeName = @"ATLAddressBarPa
         if ([self textViewHasSpaceForParticipantString:truncatedString]) {
             remainingParticipants -= 1;
             othersString = [self otherStringWithRemainingParticipants:remainingParticipants];
-            NSString *thisParticipantName = participant.displayName;
+            NSString *thisParticipantName = (_firstNameOnly ? participant.firstName : participant.displayName);
             if ([thisParticipantName isEqualToString:@""] || thisParticipantName == nil) {
                 thisParticipantName = @"Knockdown User";
             }
-            NSString *expandedString = [NSString stringWithFormat:@"%@, %@ %@", disabledString, participant.displayName, othersString];
+            NSString *expandedString = [NSString stringWithFormat:@"%@, %@ %@", disabledString, thisParticipantName, othersString];
             if ([self textViewHasSpaceForParticipantString:expandedString]) {
-                disabledString = [NSString stringWithFormat:@"%@, %@", disabledString, participant.displayName];
+                disabledString = [NSString stringWithFormat:@"%@, %@", disabledString, thisParticipantName];
             } else {
                 disabledString = truncatedString;
                 *stop = YES;

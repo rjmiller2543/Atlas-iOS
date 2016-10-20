@@ -34,6 +34,9 @@
     _topLeftImageView.translatesAutoresizingMaskIntoConstraints = NO;
     _bottomRightImageView.translatesAutoresizingMaskIntoConstraints = NO;
     
+    [_topLeftImageView setInitialsFont:[UIFont systemFontOfSize:10.0f]];
+    [_bottomRightImageView setInitialsFont:[UIFont systemFontOfSize:10.0f]];
+    
     [self addSubview:_topLeftImageView];
     [self addSubview:_bottomRightImageView];
     
